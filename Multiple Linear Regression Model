@@ -1,0 +1,53 @@
+#Import libraries
+import pandas as pd
+import numpy as np
+
+#Import dataset
+from google.colab import files
+uploaded = files.upload()
+
+import pandas as pd
+import io
+df = pd.read_excel(io.BytesIO(uploaded['Brains_Head (3).xlsx']), header = 1)
+print(df)
+
+df = df.drop("DO", axis =1, errors='ignore')
+print(df)
+
+#define x and y set
+x=df.drop("T.COLOR", axis =1).values
+print(x)
+
+y=df["T.COLOR"].values
+print(y)
+
+#Split the dataset into training and testing set
+from sklearn.model_selection import train_test_split
+x_train,y_train,x_test,y_test=train_test_split(x,y,test_size=0.2,random_state=0)
+
+#Train the model on the training set
+from sklearn.linear_model import LinearRegression
+ml=LinearRegression()
+ml.fit(x_train,y_train)
+
+#Predict the testng set results
+y_pred = ml.predict(x_test)
+print(y_pred)
+
+#Evaluate the model
+from sklearn.metrics import r2_score
+r2_score(y_test,y_pred)
+
+#Plot the results
+import matplotlib.pyplot as plt
+plt.figure(figsize=(10,5))
+plt.scatter(x_test,y_test,color='red')
+plt.xlabel("actual")
+plt.ylabel("predicted")
+plt.legend()
+plt.legend()
+plt.title("actual vs.predicted")
+
+#Predicted values
+predicted_values = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred, 'Difference':y_test-y_pred})
+print(predicted_values)
